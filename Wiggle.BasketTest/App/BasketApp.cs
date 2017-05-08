@@ -53,7 +53,7 @@ namespace Wiggle.BasketTest.App
         {
             var basket = Data.GetBasket(basketId);
             if(basket.Products != null)
-                return basket.Products.Sum(p => p.Price);
+                return basket.Products.Sum(p => (p.Price * p.Quantity));
             return null;
         }
     }
