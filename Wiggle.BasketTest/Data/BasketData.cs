@@ -8,6 +8,8 @@ namespace Wiggle.BasketTest.Data
     {
         /* *
          * Dummy implementation to get saved baskets
+         * Opted to provide a list of saved baskets for the senario given
+         * This was to avoid having to enumerate a list of products and fill a basket in a console.
          * */
         public List<Basket> GetBaskets()
         {
