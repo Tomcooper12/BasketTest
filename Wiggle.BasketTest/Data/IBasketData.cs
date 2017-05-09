@@ -7,6 +7,7 @@ namespace Wiggle.BasketTest.Data
     {
         List<Basket> GetBaskets();
         Basket GetBasket(int id);
-        string GetDiscountCode(string code);
+        Voucher GetDiscountCode(string code);
+        Dictionary<int, Voucher> GetVoucherCodes(string code);
     }
 }

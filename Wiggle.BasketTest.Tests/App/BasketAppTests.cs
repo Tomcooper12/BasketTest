@@ -7,12 +7,42 @@ using System.Threading.Tasks;
 using Wiggle.BasketTest.App;
 using Wiggle.BasketTest.Data;
 using Wiggle.BasketTest.Model;
+using FluentAssertions;
 using Xunit;
 
 namespace Wiggle.BasketTest.Tests.App
 {
     public class BasketAppTests
     {
+        private Basket _Basket { get; set; }
+
+        public BasketAppTests()
+        {
+            //setup
+            _Basket = new Basket
+            {
+                Name = "Basket 1",
+                Id = 1,
+                Products = new List<Product>
+                    {
+                        new Product
+                        {
+                            Name = "Hat",
+                            Price = 10.50m,
+                            Quantity = 1,
+                            Category =  new Category { Name = "MISC" }
+                        },
+                        new Product
+                        {
+                            Name = "Jumper",
+                            Price = 54.65m,
+                            Quantity = 1,
+                            Category =  new Category { Name = "MISC" }
+                        }
+                    }
+            };
+        }
+
         [Fact]
         public void DisplayBaskets_WritesOutput()
         {
@@ -31,81 +61,174 @@ namespace Wiggle.BasketTest.Tests.App
         [Theory]
         [InlineData("1", 1)]
         [InlineData("2", 2)]
-        public void GetBasketSelection_AsInt(string input, int expected)
+        public void ParseBasketSelection_AsInt(string input, int expected)
         {
             //arrange
-            var app = new BasketApp(new BasketData(), new ConsoleFeed());
+            var mock = new Mock<IBasketData>();
+            mock.Setup(m => m.GetBasket(It.IsAny<int>())).Returns(new Basket
+            {
+                Id = expected
+            });
+            var app = new BasketApp(mock.Object, new ConsoleFeed());
 
             //act
-            int? choice = app.ParseBasketSelection(input);
+            Basket choice = app.ParseBasketSelection(input);
 
             //assert
-            Assert.True(choice.HasValue);
-            Assert.Equal(choice.Value, expected);
+            Assert.NotNull(choice);
+            Assert.Equal(choice.Id, expected);
         }
 
         [Fact]
-        public void GetBasketSelection_Null()
+        public void ParseBasketSelection_Null()
         {
             //arrange
-            string userChoice = "test";
-            var app = new BasketApp(new BasketData(), new ConsoleFeed());
+            var mock = new Mock<IBasketData>();
+            mock.Setup(m => m.GetBasket(It.IsAny<int>())).Returns<Basket>(null);
+            var app = new BasketApp(mock.Object, new ConsoleFeed());
 
             //act
-            int? choice = app.ParseBasketSelection(userChoice);
+            Basket choice = app.ParseBasketSelection(It.IsAny<string>());
 
             //assert
-            Assert.False(choice.HasValue);
+            Assert.Null(choice);
         }
 
         [Theory]
-        [InlineData(1, 65.15d)]
-        public void GetTotalForBasket_AsDecimal(int basketId, decimal expected)
+        [InlineData(65.15d)]
+        public void GetTotalForBasket_AsDecimal(decimal expected)
         {
             //arrange
-            var dataMock = new Mock<IBasketData>();
-            dataMock.Setup(m => m.GetBasket(It.IsAny<int>())).Returns(new Basket
+            var app = new BasketApp(new BasketData(), new ConsoleFeed());
+
+            //act
+            var basket = app.GetTotalForBasket(_Basket);
+
+            //assert
+            Assert.Equal(expected, basket.Total);
+        }
+
+        [Fact]
+        public void GetTotalForBasket_HasVoucherPurchase()
+        {
+            //arrange
+            var basket = new Basket
             {
-                Name = "Basket 1",
-                Id = 1,
+                Name = "Basket 5",
+                Id = 5,
                 Products = new List<Product>
                     {
                         new Product
                         {
                             Name = "Hat",
-                            Price = 10.50m,
-                            Quantity = 1
+                            Price = 25.00m,
+                            Quantity = 1,
+                            Category = new Category { Name = "MISC" }
                         },
                         new Product
                         {
-                            Name = "Jumper",
-                            Price = 54.65m,
-                            Quantity = 1
+                            Name = "£30 Gift Voucher",
+                            Price = 30.00m,
+                            Quantity = 1,
+                            Category = new Category {Name = "Voucher" }
                         }
                     }
-            });
-            var app = new BasketApp(dataMock.Object, new ConsoleFeed());
+            };
+            var app = new BasketApp(new BasketData(), new ConsoleFeed());
 
             //act
-            var total = app.GetTotalForBasket(basketId);
+            basket = app.GetTotalForBasket(basket);
 
             //assert
-            Assert.Equal(expected, total);
+            basket.Total.ShouldBeEquivalentTo(55.00d);
+            basket.TotalProducts.ShouldBeEquivalentTo(25.00d);
         }
 
         [Fact]
         public void GetTotalForBasket_Zero()
         {
             //arrange
-            var dataMock = new Mock<IBasketData>();
-            dataMock.Setup(m => m.GetBasket(It.IsAny<int>())).Returns(new Basket());
-            var app = new BasketApp(dataMock.Object, new ConsoleFeed());
+            var app = new BasketApp(new BasketData(), new ConsoleFeed());
 
             //act
-            var total = app.GetTotalForBasket(It.IsAny<int>());
+            var basket = app.GetTotalForBasket(It.IsAny<Basket>());
 
             //assert
-            Assert.False(total.HasValue);
+            Assert.Null(basket);
+        }
+
+        [Theory]
+        [InlineData("XXX-XXX", 5.00, (int)VoucherType.Gift, 60.15)]
+        [InlineData("XXX-XXX", 10.00, (int)VoucherType.Gift, 55.15)]
+        [InlineData("XXX-XXX", 30.00, (int)VoucherType.Gift, 35.15)]
+        public void GetTotalForBasket_GiftVoucher(string code, decimal discount, int type, decimal expected)
+        {
+            //arrange
+            Basket basket = new Basket
+            {
+                Name = "Basket 1",
+                Id = 1,
+                Products = new List<Product>
+                {
+                    new Product
+                    {
+                        Name = "Hat",
+                        Price = 10.50m,
+                        Quantity = 1,
+                        Category =  new Category { Name = "MISC" }
+                    },
+                    new Product
+                    {
+                        Name = "Jumper",
+                        Price = 54.65m,
+                        Quantity = 1,
+                        Category =  new Category { Name = "MISC" }
+                    }
+                },
+                Vouchers = new List<Voucher>
+                {
+                    new Voucher
+                    {
+                        Code = code,
+                        Discount = discount,
+                        Type = type,
+                        Category = new Category {Name = "Products" }
+                    }
+                }
+            };
+            var app = new BasketApp(new BasketData(), new ConsoleFeed());
+
+            //act
+            basket = app.GetTotalForBasket(basket);
+
+            //Assert
+            basket.Total.ShouldBeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void AddVoucherToBasket_VoucherAdded()
+        {
+            //arrange
+            var app = new BasketApp(new BasketData(), new ConsoleFeed());
+            var voucher = new Voucher
+            {
+                Code = "XXX-XXX",
+                Discount = 5.00m,
+                Type = (int)VoucherType.Gift,
+                Category = new Category { Name = "Products" }
+            };
+
+            //act
+            var voucherOperation = app.AddVoucherToBasket(new VoucherOperation
+            {
+                Basket = _Basket,
+                Voucher = voucher
+            });
+
+            //assert
+            voucherOperation.VoucherApplied.Should().BeTrue();
+            voucherOperation.Basket.Vouchers.Should().HaveCount(1);
+            voucherOperation.Basket.Total.ShouldBeEquivalentTo(60.15);
         }
     }
 }

@@ -51,6 +51,9 @@
     <Compile Include="Model\Basket.cs" />
     <Compile Include="Model\Category.cs" />
     <Compile Include="Model\Products.cs" />
+    <Compile Include="Model\Voucher.cs" />
+    <Compile Include="Model\VoucherOperation.cs" />
+    <Compile Include="Model\VoucherType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

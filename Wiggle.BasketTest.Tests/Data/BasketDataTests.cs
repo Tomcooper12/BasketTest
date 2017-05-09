@@ -62,20 +62,52 @@ namespace Wiggle.BasketTest.Tests
         public void GetDiscountCode_ReturnsCode(string code)
         {
             //act
-            string discountCode = basketData.GetDiscountCode(code);
+            Voucher voucher = basketData.GetDiscountCode(code);
 
             //assert
-            Assert.True(discountCode == code);
+            Assert.Equal(voucher.Code, code);
         }
 
         [Fact]
-        public void GetDiscountCode_ReturnsEmpty()
+        public void GetDiscountCode_ReturnsNull()
         {
             //act
-            string code = basketData.GetDiscountCode(string.Empty);
+            Voucher voucher = basketData.GetDiscountCode(string.Empty);
 
             //assert
-            Assert.True(String.IsNullOrEmpty(code));
+            Assert.Null(voucher);
+        }
+
+        [Fact]
+        public void GetDiscountCode_ReturnsGift()
+        {
+            //act
+            Voucher voucher = basketData.GetDiscountCode("XXX-XXX");
+
+            //assert
+            Assert.Equal(voucher.Type, (int)VoucherType.Gift);
+        }
+
+        [Fact]
+        public void GetDiscountCode_ReturnsOffer()
+        {
+            //act
+            Voucher voucher = basketData.GetDiscountCode("YYY-YYY");
+
+            //assert
+            Assert.Equal(voucher.Type, (int)VoucherType.Offer);
+        }
+
+        [Theory]
+        [InlineData("YYY-YYY", 2)]
+        [InlineData("XXX-XXX", 1)]
+        public void GetVoucherCodes_ReturnsCodes(string code, int expected)
+        {
+            //act
+            var vouchers = basketData.GetVoucherCodes(code);
+
+            //assert
+            Assert.Equal(vouchers.Count, expected);
         }
 
         [Fact]

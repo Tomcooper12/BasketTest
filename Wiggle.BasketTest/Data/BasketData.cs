@@ -139,19 +139,84 @@ namespace Wiggle.BasketTest.Data
             var baskets = GetBaskets();
             Dictionary<int, Basket> basketLookup = baskets.ToDictionary(x => x.Id);
 
-            if(basketLookup[id] != null)
+            if (basketLookup[id] != null)
             {
                 return basketLookup[id];
             }
 
-            return new Basket();
+            return null;
         }
 
-        public string GetDiscountCode(string code)
+        public Voucher GetDiscountCode(string code)
         {
-            if (code == "XXX-XXX") return code;
-            if (code == "YYY-YYY") return code;
-            return String.Empty;
+            if (code == "XXX-XXX")
+            {
+                return new Voucher
+                {
+                    Id = 1,
+                    Code = code,
+                    Discount = 5.00m,
+                    Type = (int)VoucherType.Gift,
+                    Category = new Category { Name = "Products" }
+                };
+            }
+            if (code == "YYY-YYY")
+            {
+                return new Voucher
+                {
+                    Id = 2,
+                    Code = code,
+                    Discount = 5.00m,
+                    Type = (int)VoucherType.Offer,
+                    Category = new Category { Name = "Headgear" }
+                };
+            }
+            return null;
+        }
+
+        public Dictionary<int, Voucher> GetVoucherCodes(string code)
+        {
+            var table = new Dictionary<int, Voucher>();
+            if (code == "XXX-XXX")
+            {
+                table.Add(1, new Voucher
+                {
+                    Id = 1,
+                    Code = code,
+                    Discount = 5.00m,
+                    MinSpend = 50.00m,
+                    Type = (int)VoucherType.Gift,
+                    Category = new Category { Name = "Products" }
+                });
+                return table;
+            }
+
+            if (code == "YYY-YYY")
+            {
+                table.Add(2, new Voucher
+                {
+                    Id = 2,
+                    Code = code,
+                    Description = "£5.00 off Head Gear in baskets over £50.00",
+                    Discount = 5.00m,
+                    MinSpend = 50.00m,
+                    Type = (int)VoucherType.Offer,
+                    Category = new Category { Name = "Headgear" }
+                });
+
+                table.Add(3, new Voucher
+                {
+                    Id = 3,
+                    Code = code,
+                    Description = "£5.00 off baskets over £50.00",
+                    Discount = 5.00m,
+                    MinSpend = 50.00m,
+                    Type = (int)VoucherType.Offer,
+                    Category = new Category { Name = "Products" }
+                });
+                return table;
+            }
+            return null;
         }
     }
 }
