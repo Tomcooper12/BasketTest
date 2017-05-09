@@ -43,21 +43,6 @@ namespace Wiggle.BasketTest.Tests.App
             };
         }
 
-        [Fact]
-        public void DisplayBaskets_WritesOutput()
-        {
-            //arrange
-            var consoleMock = new Mock<IUserFeed>();
-            consoleMock.Setup(c => c.WriteLine(It.IsAny<string>()));
-            var app = new BasketApp(new BasketData(), consoleMock.Object);
-
-            //act
-            app.DisplayBaskets();
-
-            //assert
-            consoleMock.Verify(c => c.WriteLine(It.IsAny<string>()), Times.AtLeastOnce());
-        }
-
         [Theory]
         [InlineData("1", 1)]
         [InlineData("2", 2)]
@@ -69,7 +54,7 @@ namespace Wiggle.BasketTest.Tests.App
             {
                 Id = expected
             });
-            var app = new BasketApp(mock.Object, new ConsoleFeed());
+            var app = new BasketApp(mock.Object);
 
             //act
             Basket choice = app.ParseBasketSelection(input);
@@ -85,7 +70,7 @@ namespace Wiggle.BasketTest.Tests.App
             //arrange
             var mock = new Mock<IBasketData>();
             mock.Setup(m => m.GetBasket(It.IsAny<int>())).Returns<Basket>(null);
-            var app = new BasketApp(mock.Object, new ConsoleFeed());
+            var app = new BasketApp(mock.Object);
 
             //act
             Basket choice = app.ParseBasketSelection(It.IsAny<string>());
@@ -99,7 +84,7 @@ namespace Wiggle.BasketTest.Tests.App
         public void GetTotalForBasket_AsDecimal(decimal expected)
         {
             //arrange
-            var app = new BasketApp(new BasketData(), new ConsoleFeed());
+            var app = new BasketApp(new BasketData());
 
             //act
             var basket = app.GetTotalForBasket(_Basket);
@@ -134,7 +119,7 @@ namespace Wiggle.BasketTest.Tests.App
                         }
                     }
             };
-            var app = new BasketApp(new BasketData(), new ConsoleFeed());
+            var app = new BasketApp(new BasketData());
 
             //act
             basket = app.GetTotalForBasket(basket);
@@ -148,7 +133,7 @@ namespace Wiggle.BasketTest.Tests.App
         public void GetTotalForBasket_Zero()
         {
             //arrange
-            var app = new BasketApp(new BasketData(), new ConsoleFeed());
+            var app = new BasketApp(new BasketData());
 
             //act
             var basket = app.GetTotalForBasket(It.IsAny<Basket>());
@@ -196,7 +181,7 @@ namespace Wiggle.BasketTest.Tests.App
                     }
                 }
             };
-            var app = new BasketApp(new BasketData(), new ConsoleFeed());
+            var app = new BasketApp(new BasketData());
 
             //act
             basket = app.GetTotalForBasket(basket);
@@ -209,7 +194,7 @@ namespace Wiggle.BasketTest.Tests.App
         public void AddVoucherToBasket_VoucherAdded()
         {
             //arrange
-            var app = new BasketApp(new BasketData(), new ConsoleFeed());
+            var app = new BasketApp(new BasketData());
             var voucher = new Voucher
             {
                 Code = "XXX-XXX",

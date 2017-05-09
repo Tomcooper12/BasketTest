@@ -17,13 +17,11 @@ namespace Wiggle.BasketTest.App
         private const string _VOUCHER_INVALID = "You have supplied and incorrect voucher";
 
         private readonly IBasketData Data;
-        private readonly IUserFeed ConsoleFeed;
 
-        public BasketApp(IBasketData data, IUserFeed console)
+        public BasketApp(IBasketData data)
         {
             //dep inject
             Data = data;
-            ConsoleFeed = console;
         }
 
         private void DisplayBaskets()
@@ -32,7 +30,7 @@ namespace Wiggle.BasketTest.App
             //list baskets
             for (int i = 0; i < baskets.Count; i++)
             {
-                ConsoleFeed.WriteLine("[" + (i + 1) + "] " + baskets[i].Name);
+                Console.WriteLine("[" + (i + 1) + "] " + baskets[i].Name);
             }
         }
 

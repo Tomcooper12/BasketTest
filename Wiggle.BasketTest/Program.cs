@@ -13,7 +13,7 @@ namespace Wiggle.BasketTest
         static void setup()
         {
             Data = new BasketData();
-            App = new BasketApp(Data, new ConsoleFeed());
+            App = new BasketApp(Data);
         }
         static void Main(string[] args)
         {
@@ -75,7 +75,7 @@ namespace Wiggle.BasketTest
             //get voucher
             Console.WriteLine("Please add your voucher:");
             string voucherCode = Console.ReadLine();
-            var vouchers = Data.GetVoucherCodes(voucherCode);
+            var vouchers = Data.GetVoucherCodes(voucherCode.ToLower());
 
             Voucher voucher;
             bool gotVoucher = App.DisplayAndGetVoucher(vouchers, out voucher);

@@ -45,9 +45,7 @@
   <ItemGroup>
     <Compile Include="App\BasketApp.cs" />
     <Compile Include="Data\BasketData.cs" />
-    <Compile Include="Data\ConsoleFeed.cs" />
     <Compile Include="Data\IBasketData.cs" />
-    <Compile Include="Data\IUserFeed.cs" />
     <Compile Include="Model\Basket.cs" />
     <Compile Include="Model\Category.cs" />
     <Compile Include="Model\Products.cs" />

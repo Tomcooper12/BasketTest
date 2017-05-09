@@ -9,16 +9,11 @@ namespace Wiggle.BasketTest.Tests
     public class BasketDataTests
     {
         private readonly BasketData basketData;
-        private readonly IUserFeed consoleFeed;
 
         public BasketDataTests()
         {
             //arrange
             basketData = new BasketData();
-
-            var consoleMock = new Mock<IUserFeed>();
-            consoleMock.Setup(m => m.ReadLine()).Returns(string.Empty);
-            consoleFeed = consoleMock.Object;
         }
 
         [Fact]
@@ -62,7 +57,7 @@ namespace Wiggle.BasketTest.Tests
         public void GetDiscountCode_ReturnsCode(string code)
         {
             //act
-            Voucher voucher = basketData.GetDiscountCode(code);
+            Voucher voucher = basketData.GetDiscountCode(code.ToLower());
 
             //assert
             Assert.Equal(voucher.Code, code);
@@ -82,7 +77,7 @@ namespace Wiggle.BasketTest.Tests
         public void GetDiscountCode_ReturnsGift()
         {
             //act
-            Voucher voucher = basketData.GetDiscountCode("XXX-XXX");
+            Voucher voucher = basketData.GetDiscountCode("xxx-xxx");
 
             //assert
             Assert.Equal(voucher.Type, (int)VoucherType.Gift);
@@ -92,32 +87,22 @@ namespace Wiggle.BasketTest.Tests
         public void GetDiscountCode_ReturnsOffer()
         {
             //act
-            Voucher voucher = basketData.GetDiscountCode("YYY-YYY");
+            Voucher voucher = basketData.GetDiscountCode("yyy-yyy");
 
             //assert
             Assert.Equal(voucher.Type, (int)VoucherType.Offer);
         }
 
         [Theory]
-        [InlineData("YYY-YYY", 2)]
-        [InlineData("XXX-XXX", 1)]
+        [InlineData("yyy-yyy", 2)]
+        [InlineData("xxx-xxx", 1)]
         public void GetVoucherCodes_ReturnsCodes(string code, int expected)
         {
             //act
-            var vouchers = basketData.GetVoucherCodes(code);
+            var vouchers = basketData.GetVoucherCodes(code.ToLower());
 
             //assert
             Assert.Equal(vouchers.Count, expected);
-        }
-
-        [Fact]
-        public void ConsoleFeed_ReturnsEmpty()
-        {
-            //act
-            var test = consoleFeed.ReadLine();
-
-            //assert
-            Assert.True(String.IsNullOrEmpty(test));
         }
 
     }

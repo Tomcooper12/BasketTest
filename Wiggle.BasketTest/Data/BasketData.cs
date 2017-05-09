@@ -149,7 +149,7 @@ namespace Wiggle.BasketTest.Data
 
         public Voucher GetDiscountCode(string code)
         {
-            if (code == "XXX-XXX")
+            if (code == "xxx-xxx")
             {
                 return new Voucher
                 {
@@ -160,7 +160,7 @@ namespace Wiggle.BasketTest.Data
                     Category = new Category { Name = "Products" }
                 };
             }
-            if (code == "YYY-YYY")
+            if (code == "yyy-yyy")
             {
                 return new Voucher
                 {
@@ -177,7 +177,7 @@ namespace Wiggle.BasketTest.Data
         public Dictionary<int, Voucher> GetVoucherCodes(string code)
         {
             var table = new Dictionary<int, Voucher>();
-            if (code == "XXX-XXX")
+            if (code == "xxx-xxx")
             {
                 table.Add(1, new Voucher
                 {
@@ -191,7 +191,7 @@ namespace Wiggle.BasketTest.Data
                 return table;
             }
 
-            if (code == "YYY-YYY")
+            if (code == "yyy-yyy")
             {
                 table.Add(2, new Voucher
                 {
