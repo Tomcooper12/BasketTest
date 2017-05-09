@@ -26,6 +26,16 @@ namespace Wiggle.BasketTest.App
             ConsoleFeed = console;
         }
 
+        private void DisplayBaskets()
+        {
+            var baskets = Data.GetBaskets();
+            //list baskets
+            for (int i = 0; i < baskets.Count; i++)
+            {
+                ConsoleFeed.WriteLine("[" + (i + 1) + "] " + baskets[i].Name);
+            }
+        }
+
         public bool DisplayAndGet(out Basket value)
         {
             DisplayBaskets();
@@ -69,20 +79,9 @@ namespace Wiggle.BasketTest.App
             return false;
         }
 
-        public void DisplayBaskets()
-        {
-            var baskets = Data.GetBaskets();
-            //list baskets
-            for (int i = 0; i < baskets.Count; i++)
-            {
-                ConsoleFeed.WriteLine("[" + (i + 1) + "] " + baskets[i].Name);
-            }
-        }
-
         public Basket ParseBasketSelection(string selection)
         {
             int basketId;
-            //return
             if (!int.TryParse(selection, out basketId)) return null;
             return Data.GetBasket(basketId);
         }
