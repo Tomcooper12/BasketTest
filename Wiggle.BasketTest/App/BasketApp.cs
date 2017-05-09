@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Wiggle.BasketTest.Data;
 using Wiggle.BasketTest.Model;
 
 namespace Wiggle.BasketTest.App
 {
-    public class BasketApp
+    internal class BasketApp
     {
         private const string _ONLY_ONE_OFFER = "You may only use one offer voucher per purchase";
         private const string _MUST_HAVE_HEADGEAR = "There are no products in your basket applicable to voucher {VOUCHER}.";
@@ -18,23 +16,13 @@ namespace Wiggle.BasketTest.App
 
         private readonly IBasketData Data;
 
-        public BasketApp(IBasketData data)
+        internal BasketApp(IBasketData data)
         {
             //dep inject
             Data = data;
         }
 
-        private void DisplayBaskets()
-        {
-            var baskets = Data.GetBaskets();
-            //list baskets
-            for (int i = 0; i < baskets.Count; i++)
-            {
-                Console.WriteLine("[" + (i + 1) + "] " + baskets[i].Name);
-            }
-        }
-
-        public bool DisplayAndGet(out Basket value)
+        internal bool DisplayAndGet(out Basket value)
         {
             DisplayBaskets();
             var selection = Console.ReadLine();
@@ -48,7 +36,7 @@ namespace Wiggle.BasketTest.App
             return false;
         }
 
-        public bool DisplayAndGetVoucher(Dictionary<int, Voucher> vouchers, out Voucher value)
+        internal bool DisplayAndGetVoucher(Dictionary<int, Voucher> vouchers, out Voucher value)
         {
             int voucherId;
             if(vouchers.Count == 1)
@@ -77,14 +65,14 @@ namespace Wiggle.BasketTest.App
             return false;
         }
 
-        public Basket ParseBasketSelection(string selection)
+        internal Basket ParseBasketSelection(string selection)
         {
             int basketId;
             if (!int.TryParse(selection, out basketId)) return null;
             return Data.GetBasket(basketId);
         }
 
-        public Basket GetTotalForBasket(Basket basket)
+        internal Basket GetTotalForBasket(Basket basket)
         {
             if (basket == null || basket.Products == null) return null;
             //total products
@@ -119,7 +107,7 @@ namespace Wiggle.BasketTest.App
             return basket;
         }
 
-        public VoucherOperation AddVoucherToBasket(VoucherOperation voucherOperation)
+        internal VoucherOperation AddVoucherToBasket(VoucherOperation voucherOperation)
         {
             var basket = voucherOperation.Basket;
             var voucher = voucherOperation.Voucher;
@@ -176,6 +164,16 @@ namespace Wiggle.BasketTest.App
             voucherOperation.Message = _VOUCHER_APPLIED.Replace("{VOUCHER}", voucher.Code);
             return voucherOperation;
 
+        }
+
+        private void DisplayBaskets()
+        {
+            var baskets = Data.GetBaskets();
+            //list baskets
+            for (int i = 0; i < baskets.Count; i++)
+            {
+                Console.WriteLine("[" + (i + 1) + "] " + baskets[i].Name);
+            }
         }
     }
 }

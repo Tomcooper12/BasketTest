@@ -1,9 +1,5 @@
 ﻿using Moq;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Wiggle.BasketTest.App;
 using Wiggle.BasketTest.Data;
 using Wiggle.BasketTest.Model;

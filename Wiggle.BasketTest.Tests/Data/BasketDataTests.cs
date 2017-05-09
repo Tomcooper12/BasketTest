@@ -1,6 +1,4 @@
-﻿using Moq;
-using System;
-using Wiggle.BasketTest.Data;
+﻿using Wiggle.BasketTest.Data;
 using Wiggle.BasketTest.Model;
 using Xunit;
 
@@ -52,8 +50,8 @@ namespace Wiggle.BasketTest.Tests
         }
 
         [Theory]
-        [InlineData("XXX-XXX")]
-        [InlineData("YYY-YYY")]
+        [InlineData("xxx-xxx")]
+        [InlineData("yyy-yyy")]
         public void GetDiscountCode_ReturnsCode(string code)
         {
             //act
